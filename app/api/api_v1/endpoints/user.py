@@ -81,8 +81,13 @@ def update_user(
     user_in: UserUpdate, db: Session = Depends(deps.get_db)
 ) -> dict:
     """
-    Create a new user in the database.
+    Update the user in the database.
     """
-    user = crud.user.update(db=db, obj_in=user_in)
+    db_user = crud.user.get(db, id=user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=404, detail=f"User with ID {user_id} not found"
+        )
 
+    user = crud.user.update(db=db, db_obj=db_user, obj_in=user_in)
     return user
