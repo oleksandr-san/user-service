@@ -41,12 +41,22 @@ spec:
             httpGet:
               path: /api/v1/user
               port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /api/v1/user
               port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: SQLALCHEMY_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: user-service-secret
+                key: DATABASE_URI
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
